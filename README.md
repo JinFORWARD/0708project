@@ -1,4 +1,4 @@
-# Slowloris Gateway Defense Lab
+﻿# Slowloris Gateway Defense Lab
 
 本项目用于完成“慢速攻击模拟与网关防御实践”培训作业。你可以把它理解成一个很小的本地实验室：用 Nginx（高性能 Web 服务器、反向代理和网关软件）放在入口，后面接一个 Python（解释型编程语言）写的后端服务，然后用 Slowloris（慢速 HTTP 请求头攻击）工具模拟“慢慢发请求头、拖住入口连接”的攻击。
 
@@ -104,10 +104,10 @@ localhost
 如果你是从开始菜单打开 PowerShell，请先进入项目目录：
 
 ```powershell
-cd "<TaskDir>"
+cd "D:\Workspace\01-onboarding-training\2026-07-08-gateway-tech-intro\0708project"
 ```
 
-这里的 `<TaskDir>` 指你的 `0708project` 目录。为了避免把本机路径写进作业文档，本文不展开完整用户目录。
+这个路径已经全部使用英文目录名，避免 Nginx 在中文路径下启动失败。
 
 ### 3.2 如果 PowerShell 不允许运行脚本
 
@@ -423,3 +423,4 @@ py --version
 - Nginx 官方核心模块文档：<https://nginx.org/en/docs/http/ngx_http_core_module.html>
 - Nginx 官方连接限制模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_conn_module.html>
 - Nginx 官方请求限速模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_req_module.html>
+

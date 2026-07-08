@@ -1,4 +1,4 @@
-# 慢速攻击模拟与网关防御实践短报告
+﻿# 慢速攻击模拟与网关防御实践短报告
 
 ## 1. 实验范围
 
@@ -39,9 +39,9 @@ flowchart LR
 | --- | --- |
 | Python | 已检测到 Python 3.12.13。 |
 | Docker | 未检测到，且本次不使用 Docker（开源容器化平台）。 |
-| Nginx | 当前命令行未检测到 `nginx` 命令。 |
+| Nginx | 已确认 Windows 版 Nginx，路径为 `C:\nginx-1.31.2`，版本为 `nginx/1.31.2`。 |
 
-因此，本阶段已交付源码、配置、脚本和复现实验步骤，但没有伪造 Nginx 实际运行结果。若本机已安装 Nginx Windows 版，请在运行脚本时传入 `-NginxHome <NGINX_HOME>`。
+因此，本阶段已交付源码、配置、脚本和复现实验步骤，并已完成基线配置与加固配置的 Nginx 语法测试。实际攻击现象仍需要按 README 在本机运行后补充，不能编造。
 
 ## 5. 攻击现象记录
 
@@ -185,7 +185,7 @@ server {
 
 ## 10. 不足与后续扩展
 
-1. 当前命令行未检测到 `nginx.exe`，实际攻击现象需要在本机 Nginx 可用后补充，不能编造。
+1. 已确认 `C:\nginx-1.31.2\nginx.exe` 可用，且两个 Nginx 配置语法测试通过；实际攻击现象仍需要本机运行后补充，不能编造。
 2. 资源曲线是选做项，本阶段只预留接口。
 3. 本次只实现 Slowloris；Slow POST 和 TLS（Transport Layer Security，传输层安全协议）慢握手可作为扩展方向。
 4. 防御仅使用 Nginx 原生配置，未使用系统防火墙、WAF（Web Application Firewall，Web 应用防火墙）或第三方清洗能力。
@@ -203,9 +203,9 @@ server {
 
 | 检查点 | 状态 |
 | --- | --- |
-| 本机是否已安装 Nginx Windows 版 | 待确认 |
-| `nginx-baseline.conf` 是否能在本机启动 | 待运行后确认 |
-| `nginx-hardened.conf` 是否能在本机启动 | 待运行后确认 |
+| 本机是否已安装 Nginx Windows 版 | 已确认：`C:\nginx-1.31.2`，版本 `nginx/1.31.2`。 |
+| `nginx-baseline.conf` 是否能在本机启动 | 语法测试已通过；完整启动与攻击现象待运行后确认。 |
+| `nginx-hardened.conf` 是否能在本机启动 | 语法测试已通过；完整启动与攻击现象待运行后确认。 |
 | 基线攻击现象是否已按表格补充 | 待运行后填写 |
 | 加固后防御效果是否已按表格补充 | 待运行后填写 |
 | 是否补做资源曲线 | 必做完成后再考虑 |
@@ -217,3 +217,4 @@ server {
 - Nginx 官方核心模块文档：<https://nginx.org/en/docs/http/ngx_http_core_module.html>
 - Nginx 官方连接限制模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_conn_module.html>
 - Nginx 官方请求限速模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_req_module.html>
+

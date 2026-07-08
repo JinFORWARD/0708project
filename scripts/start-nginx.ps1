@@ -1,4 +1,4 @@
-param(
+﻿param(
     [ValidateSet("baseline", "hardened")]
     [string]$Mode = "baseline",
     [string]$NginxHome = ""
@@ -13,7 +13,7 @@ if ($NginxHome -ne "") {
 } else {
     $cmd = Get-Command nginx -ErrorAction SilentlyContinue
     if (-not $cmd) {
-        throw "Nginx was not found in PATH. Pass -NginxHome, for example: .\scripts\start-nginx.ps1 -NginxHome C:\nginx"
+        throw "Nginx was not found in PATH. Pass -NginxHome, for example: .\scripts\start-nginx.ps1 -NginxHome C:\nginx-1.31.2"
     }
     $NginxExe = $cmd.Source
 }
@@ -45,3 +45,4 @@ Write-Host "Testing Nginx config: $conf"
 Write-Host "Starting Nginx with $conf"
 & $NginxExe -p $prefixForNginx -c $conf
 Write-Host "Nginx should now listen on http://127.0.0.1:8080"
+

@@ -78,7 +78,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "75d044370cf5fee1",
@@ -185,6 +186,11 @@
   },
   "active": "6c183861818c74a4",
   "lastOpenFiles": [
+    "nginx/temp/scgi_temp",
+    "nginx/temp/uwsgi_temp",
+    "nginx/temp/fastcgi_temp",
+    "nginx/temp/proxy_temp",
+    "nginx/temp/client_body_temp",
     "02-approach-and-tech-selection.md",
     "03-delivery.md",
     "README.md",
@@ -196,10 +202,6 @@
     "scripts/start-nginx.ps1",
     "scripts/start-backend.ps1",
     "scripts/run-hardened-test.ps1",
-    "scripts/run-baseline-test.ps1",
-    "scripts/collect-metrics.ps1",
-    "scripts/check-env.ps1",
-    "scripts",
     "01-requirements-and-questions.md"
   ]
 }
