@@ -1,4 +1,4 @@
-# Slowloris Gateway Defense Lab
+﻿# Slowloris Gateway Defense Lab
 
 本项目用于完成“慢速攻击模拟与网关防御实践”培训作业。你可以把它理解成一个很小的本地实验室：用 Nginx（高性能 Web 服务器、反向代理和网关软件）放在入口，后面接一个 Python（解释型编程语言）写的后端服务，然后用 Slowloris（慢速 HTTP 请求头攻击）工具模拟“慢慢发请求头、拖住入口连接”的攻击。
 
@@ -85,7 +85,14 @@ localhost
     collect-metrics.ps1             # 预留的指标采集脚本
   observability
     metrics-template.csv            # 指标模板
+    metrics-checklist.md            # 可观测性指标清单
     notes.md                        # 指标说明
+  demo-kit
+    run-demo-tests.ps1              # 明天展示用自动测试脚本
+    README.md                       # 演示脚本说明
+    member-a-speaker-notes.md       # 成员 A 讲解稿
+    member-b-speaker-notes.md       # 成员 B 讲解稿
+    presentation-flow.md            # 双人展示流程
 ```
 
 ## 3. 运行前准备
@@ -417,8 +424,10 @@ py --version
 1. [03-delivery.md](03-delivery.md)：短报告，已经包含基线攻击现象、加固后防御现象、Nginx 防御配置和指标清单。
 2. `observability\20260708-174426-baseline\`：基线组攻击日志、健康检查 CSV、连接指标 CSV。
 3. `observability\20260708-174607-hardened\`：加固组攻击日志、健康检查 CSV、连接指标 CSV。
-4. `nginx\conf\nginx-baseline.conf` 和 `nginx\conf\nginx-hardened.conf`：防御前后的 Nginx 配置。
-5. `attack\slowloris.py`、`backend\app.py`、`scripts\*.ps1`：源码和运行脚本。
+4. `observability\metrics-checklist.md`：指标清单选做项。
+5. `demo-kit\`：明天展示用自动测试脚本、双方讲解稿和讲解流程。
+6. `nginx\conf\nginx-baseline.conf` 和 `nginx\conf\nginx-hardened.conf`：防御前后的 Nginx 配置。
+7. `attack\slowloris.py`、`backend\app.py`、`scripts\*.ps1`：源码和运行脚本。
 
 不需要改攻击工具去打外部地址，也不需要把资源曲线强行补齐。本次资源曲线是选做项，已经保留 CSV 数据，后续需要时可以导入 Excel 画图。
 
@@ -427,6 +436,9 @@ py --version
 - Nginx 官方核心模块文档：<https://nginx.org/en/docs/http/ngx_http_core_module.html>
 - Nginx 官方连接限制模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_conn_module.html>
 - Nginx 官方请求限速模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_req_module.html>
+
+
+
 
 
 
