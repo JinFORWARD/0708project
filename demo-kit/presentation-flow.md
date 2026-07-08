@@ -1,20 +1,20 @@
 ﻿# 双人展示流程
 
-定位：两位成员都是新人，展示重点放在“我们怎么理解、怎么验证、看到什么现象”，不要追求专家式复杂表达。
+定位：两位成员都是新人，展示重点放在“我们怎么理解、怎么验证、看到什么现象”。本次不现场运行自动测试脚本，只展示源码、配置、短报告和指标清单。
 
 建议总时长：10-12 分钟。两人时间基本各占一半。
 
 ## 1. 时间分配
 
-| 时间 | 负责人 | 内容 | 要展示的文件或窗口 |
+| 时间 | 负责人 | 内容 | 要展示的文件 |
 | --- | --- | --- | --- |
 | 0:00-0:40 | A | 开场：说明本地授权实验、安全边界和目标。 | `README.md` 第 0、1 节。 |
-| 0:40-2:00 | A | 架构：客户端 -> Nginx 网关 -> Python 后端。 | `03-delivery.md` 架构图。 |
+| 0:40-2:00 | A | 架构：客户端 -> Nginx 网关 -> Python 后端。 | `03-delivery.md` 第 3 节。 |
 | 2:00-3:20 | A | 基线配置和加固配置的差异。 | `nginx/conf/nginx-baseline.conf`、`nginx/conf/nginx-hardened.conf`。 |
-| 3:20-4:50 | B | Slowloris 原理和攻击脚本。 | `attack/slowloris.py`。 |
-| 4:50-6:20 | B | 基线组攻击现象：alive 连接、TCP 连接数、日志。 | `observability/20260708-174426-baseline/` 或 demo 窗口。 |
-| 6:20-7:40 | A | 防御参数为什么有效，重点讲 `client_header_timeout 5s`。 | `nginx-hardened.conf`。 |
-| 7:40-9:20 | B | 加固组现象：第二轮连接为 0、408、超时日志。 | `observability/20260708-174607-hardened/` 或 demo 窗口。 |
+| 3:20-4:50 | B | Slowloris 原理和攻击脚本。 | `attack/slowloris.py`、`03-delivery.md` 第 6 节。 |
+| 4:50-6:20 | B | 基线组攻击现象：慢连接持续存活、TCP 连接数维持高位、日志出现 400。 | `03-delivery.md` 第 5.2 节；`observability/20260708-174426-baseline/`。 |
+| 6:20-7:40 | A | 防御参数为什么有效，重点讲 `client_header_timeout 5s`。 | `nginx/conf/nginx-hardened.conf`、`03-delivery.md` 第 7 节。 |
+| 7:40-9:20 | B | 加固组现象：第二轮连接为 0、日志出现 408、连接数快速下降。 | `03-delivery.md` 第 5.3 节；`observability/20260708-174607-hardened/`。 |
 | 9:20-10:30 | A/B | 一起总结防御前后对比和指标清单。 | `03-delivery.md` 第 8、9 节；`observability/metrics-checklist.md`。 |
 | 10:30-12:00 | A/B | 预留问答。 | 按问题打开对应文件。 |
 
@@ -32,24 +32,22 @@ A/B 共同收尾：
 
 > 我们这次的核心结论是：慢速攻击不一定靠大流量，而是通过拖长连接生命周期占用网关入口。Nginx 的请求头超时和连接限制可以把这个生命周期压短，配合连接数、状态码和错误日志就能发现和定位这类问题。
 
-## 3. 明天现场演示顺序
+## 3. 明天展示顺序
 
-如果要现场跑脚本，建议先提前打开项目根目录 PowerShell，然后运行：
+1. 打开 `03-delivery.md`，先讲实验目标、架构和结论。
+2. 打开 `nginx/conf/nginx-baseline.conf` 和 `nginx/conf/nginx-hardened.conf`，讲防御前后配置差异。
+3. 打开 `attack/slowloris.py`，讲攻击工具如何慢慢发送 HTTP（HyperText Transfer Protocol，超文本传输协议）请求头。
+4. 回到 `03-delivery.md` 第 5 节，讲基线组和加固组的攻击现象。
+5. 打开 `observability/metrics-checklist.md`，讲指标清单。
+6. 如有需要，再打开 `observability/20260708-174426-baseline/` 和 `observability/20260708-174607-hardened/` 中的 CSV 数据或日志作为证据。
 
-```powershell
-.\demo-kit\run-demo-tests.ps1 -NginxHome C:\nginx-1.31.2
-```
+## 4. 如果被问为什么不现场跑
 
-现场不要临时提高连接数。默认 60 个连接、35 秒持续时间已经足够展示现象，也更稳。
+建议回答：
 
-建议展示窗口顺序：
+> 这轮实验结果已经由 agent 在本机自动跑过，并写入日志和短报告。现场脚本复现暂时不够稳定，为了避免展示时间被环境问题打断，本次以固定实验参数、已有日志和报告结论为准。
 
-1. `Demo - Baseline Slowloris`：看基线 `alive=60`。
-2. `Demo - Baseline metrics`：看 TCP 连接维持高位。
-3. `Demo - Hardened Slowloris`：看加固后 `alive=0`。
-4. `Demo - Summary`：用自动汇总收尾。
-
-## 4. 新人展示注意事项
+## 5. 新人展示注意事项
 
 1. 不要说“我们实现了完整安全防护体系”，只说“我们验证了 Nginx 原生配置对 Slowloris 的基础防护效果”。
 2. 不要把 Slowloris 讲成大流量攻击，它的重点是慢连接。
@@ -57,13 +55,13 @@ A/B 共同收尾：
 4. 如果讲不清某个 Nginx 参数，就回到本次实测：连接是否被更快释放、日志是否出现 408。
 5. 两个人都可以多说“我的理解是”，这样更符合新人培训展示。
 
-## 5. 问答备用答案
+## 6. 问答备用答案
 
 问：为什么两个人不按“攻击”和“报告”分？
 答：因为这样容易割裂。我们按“环境/防御”和“攻击/观测”分，最后共同完成对比结论，链路更完整。
 
 问：指标清单有什么用？
-答：它告诉我们不只看攻击脚本输出，还要看 TCP 连接数、正常请求耗时、Nginx 状态码和错误日志，才能判断影响在哪里。
+答：它告诉我们不只看攻击脚本输出，还要看 TCP（Transmission Control Protocol，传输控制协议）连接数、正常请求耗时、Nginx 状态码和错误日志，才能判断影响在哪里。
 
 问：这次还缺什么？
 答：资源曲线还没有画成图片，高强度压测也没有做；这符合本次培训目标，后续可以用 CSV 数据继续扩展。

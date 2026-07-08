@@ -15,11 +15,13 @@ $RunId = (Get-Date).ToString("yyyyMMdd-HHmmss-demo")
 $RelRunRoot = Join-Path "observability" $RunId
 $RunRoot = Join-Path $ProjectRoot $RelRunRoot
 $MarkerDir = Join-Path $RunRoot ".done"
+$WindowScriptDir = Join-Path $RunRoot "window-scripts"
 
 New-Item -ItemType Directory -Force -Path $RunRoot | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $RunRoot "baseline") | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $RunRoot "hardened") | Out-Null
 New-Item -ItemType Directory -Force -Path $MarkerDir | Out-Null
+New-Item -ItemType Directory -Force -Path $WindowScriptDir | Out-Null
 
 function Quote-PS {
     param([string]$Value)
@@ -68,13 +70,16 @@ function Start-DemoWindow {
         $donePath = Join-Path $MarkerDir $DoneName
     }
     $doneValue = Quote-PS $donePath
+    $safeName = ($Title -replace '[^A-Za-z0-9_.-]+', '-')
+    $scriptName = "{0}-{1}.ps1" -f $safeName, ([guid]::NewGuid().ToString('N').Substring(0, 8))
+    $scriptPath = Join-Path $WindowScriptDir $scriptName
 
-    $windowCommand = @"
+    $windowScript = @"
 `$Host.UI.RawUI.WindowTitle = $titleValue
 `$ErrorActionPreference = 'Stop'
 try {
     Set-Location -LiteralPath $projectValue
-    Write-Host ('=== ' + $titleValue.Trim("'" ) + ' ===') -ForegroundColor Cyan
+    Write-Host ('=== ' + $titleValue + ' ===') -ForegroundColor Cyan
 $Command
     if ($doneValue -ne '') { Set-Content -LiteralPath $doneValue -Value 'ok' -Encoding UTF8 }
 } catch {
@@ -85,7 +90,8 @@ Write-Host ''
 Write-Host 'Keep this window open for the live demo. Close it manually when finished.' -ForegroundColor Yellow
 "@
 
-    Start-Process -FilePath "powershell.exe" -WindowStyle Normal -WorkingDirectory $ProjectRoot -ArgumentList @("-NoExit", "-ExecutionPolicy", "Bypass", "-Command", $windowCommand) | Out-Null
+    Set-Content -LiteralPath $scriptPath -Encoding UTF8 -Value $windowScript
+    Start-Process -FilePath "powershell.exe" -WindowStyle Normal -WorkingDirectory $ProjectRoot -ArgumentList @("-NoExit", "-ExecutionPolicy", "Bypass", "-File", $scriptPath) | Out-Null
 }
 
 function Wait-ForMarker {
@@ -195,4 +201,5 @@ Get-Content -LiteralPath $(Quote-PS $summaryPath) -Encoding UTF8
 Write-Host "Demo finished." -ForegroundColor Green
 Write-Host "Summary: $summaryPath"
 Write-Host "Keep the opened PowerShell windows for the presentation, or close them after rehearsal."
+
 

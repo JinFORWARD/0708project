@@ -223,12 +223,17 @@ server {
 | 是否补充指标清单 | 已完成：见 `observability/metrics-checklist.md`。 |
 | 是否仍存在公司名、人名、客户名或内部路径 | 本阶段已做静态脱敏检查，交付前仍建议人工复核。 
 
+
+展示口径补充：明天展示时不现场运行自动测试脚本，只展示源码、Nginx 配置、短报告和指标清单。如果被问到为什么不现场跑一遍，统一说明：本轮实验已由 agent 在本机自动跑过，并写入日志和短报告；现场脚本复现暂时不够稳定，为避免展示时间被环境问题打断，本次以固定实验参数、已有日志和报告结论为准。
+
 ## 12. 参考资料
 
 - 课程材料 `Source-A.html`：已脱敏引用其“网关是边界上的控制点”和“网关既是防线，也是攻击目标”的主线。
 - Nginx 官方核心模块文档：<https://nginx.org/en/docs/http/ngx_http_core_module.html>
 - Nginx 官方连接限制模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_conn_module.html>
 - Nginx 官方请求限速模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_req_module.html>
+
+
 
 
 

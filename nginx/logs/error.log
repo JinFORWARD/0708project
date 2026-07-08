@@ -281,3 +281,5 @@
 2026/07/08 17:46:24 [info] 2868#6348: *61 client timed out (10060: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond) while reading client request headers, client: 127.0.0.1, server: localhost, request: "GET / HTTP/1.1", host: "127.0.0.1"
 2026/07/08 17:46:24 [info] 2868#6348: *62 client timed out (10060: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond) while reading client request headers, client: 127.0.0.1, server: localhost, request: "GET / HTTP/1.1", host: "127.0.0.1"
 2026/07/08 17:47:05 [notice] 32988#50912: signal process started
+2026/07/08 18:19:19 [notice] 27188#42532: signal process started
+2026/07/08 18:19:19 [error] 27188#42532: CreateFile() "D:/Workspace/01-onboarding-training/2026-07-08-gateway-tech-intro/0708project/nginx/logs/nginx.pid" failed (2: The system cannot find the file specified)
