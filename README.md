@@ -155,6 +155,8 @@ py --version
 .\scripts\start-backend.ps1 -PythonExe py
 ```
 
+如果 `python --version` 和 `py --version` 都提示找不到命令，先安装 Python 3，并在安装界面勾选 `Add python.exe to PATH`。安装完成后重新打开 PowerShell。
+
 ## 4. 第一次跑通：确认后端和网关能访问
 
 建议开 2 个 PowerShell 窗口：
@@ -423,4 +425,5 @@ py --version
 - Nginx 官方核心模块文档：<https://nginx.org/en/docs/http/ngx_http_core_module.html>
 - Nginx 官方连接限制模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_conn_module.html>
 - Nginx 官方请求限速模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_req_module.html>
+
 
