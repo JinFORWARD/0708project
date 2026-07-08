@@ -1,0 +1,2 @@
+timestamp,phase,local_port,tcp_connections_total,tcp_connections_established,normal_request_status,nginx_status_hint,note
+2026-07-08T00:00:00,baseline,8080,,,,,fill after running collect-metrics.ps1
