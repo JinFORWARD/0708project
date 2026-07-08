@@ -1,4 +1,4 @@
-﻿# 慢速攻击模拟与网关防御实践短报告
+# 慢速攻击模拟与网关防御实践短报告
 
 ## 1. 实验范围
 
@@ -41,50 +41,52 @@ flowchart LR
 | Docker | 未检测到，且本次不使用 Docker（开源容器化平台）。 |
 | Nginx | 已确认 Windows 版 Nginx，路径为 `C:\nginx-1.31.2`，版本为 `nginx/1.31.2`。 |
 
-因此，本阶段已交付源码、配置、脚本和复现实验步骤，并已完成基线配置与加固配置的 Nginx 语法测试。实际攻击现象仍需要按 README 在本机运行后补充，不能编造。
+因此，本阶段已交付源码、配置、脚本和复现实验步骤，并已完成基线配置与加固配置的 Nginx 语法测试。随后已在本机自动运行一轮基线与加固对照测试，测试结果记录在第 5、8、9 节
 
-## 5. 攻击现象记录
+ 攻击现象记录
 
-### 5.1 基线配置下应观察的现象
+### 5.1 本次自动测试日志位置
 
-在 `nginx-baseline.conf` 下运行 Slowloris 工具后，预期可以观察到：
+有效测试数据以以下两个目录为准：
 
-1. 攻击工具输出已打开的慢连接数量，并定期显示仍然存活的连接数。
-2. Nginx 需要等待未完成的请求头，请求不会马上进入后端。
-3. `nginx/logs/access.log` 中这类未完成请求通常不会立即形成完整访问记录。
-4. Windows 的 `Get-NetTCPConnection` 可看到指向 `127.0.0.1:8080` 的 TCP（Transmission Control Protocol，传输控制协议）连接增加。
-5. 当连接数接近网关可承载上限时，正常 `/health` 请求可能变慢、失败或排队。
+| 阶段 | 日志目录 |
+| --- | --- |
+| 基线配置 | `observability/20260708-174426-baseline/` |
+| 加固配置 | `observability/20260708-174607-hardened/` |
 
-需要本机运行后补充的实际记录：
+说明：首次合并跑测试时发现 `scripts/stop-nginx.ps1` 没有带 `-c` 指定项目配置，可能导致后续加固组仍受前一次 Nginx 进程影响。该脚本已修正，并重新分开运行基线组和加固组；因此本报告只采用上表两个有效目录的数据。
+
+### 5.2 基线配置下的实际观察结果
+
+在 `nginx-baseline.conf` 下运行 Slowloris 工具后，观察到慢连接可以长期占住 Nginx 入口连接。测试持续 35 秒期间，攻击工具 4 轮检查均显示 60 个慢连接仍然存活；TCP 连接数也稳定维持在较高水平。
 
 | 记录项 | 结果 |
 | --- | --- |
-| 基线启动时间 | 待运行后填写 |
-| Slowloris 参数 | 默认：30 连接，10 秒间隔，60 秒持续时间 |
-| 慢连接存活情况 | 待运行后填写 |
-| 正常请求表现 | 待运行后填写 |
-| Nginx 日志片段 | 待运行后填写 |
+| 基线启动时间 | 2026-07-08 17:44:52 左右。 |
+| Slowloris 参数 | 目标 `127.0.0.1:8080`；60 个连接；每 10 秒补发一次头部；持续 35 秒。 |
+| 慢连接存活情况 | `baseline-attack.log` 显示 4 轮均为 `alive=60`、`failed_since_last_round=0`。 |
+| TCP 连接指标 | `baseline-metrics.csv` 显示 `tcp_connections_total=63`、`tcp_connections_established=62`，从 17:44:52 到 17:45:27 基本不下降。 |
+| 正常请求表现 | `baseline-health.csv` 中 7 次 `/health` 均返回 `200`，耗时约 21-65 ms。 |
+| Nginx 日志片段 | 测试结束后攻击脚本主动关闭慢连接，`access.log` 出现 `400`，`request_time` 约 40 秒；`error.log` 出现 `client prematurely closed connection while reading client request headers`。 |
 
-### 5.2 加固配置下应观察的现象
+我的理解：基线配置不是完全“不能用”，因为这次本机低强度测试下 `/health` 仍然正常；但它让 60 个未完成请求头持续占用连接，说明入口层已经被慢请求拖住。如果连接数继续增大，正常请求就更容易排队、变慢或失败。
 
-在 `nginx-hardened.conf` 下重新运行同样攻击后，预期可以观察到：
+### 5.3 加固配置下的实际观察结果
 
-1. 慢连接更快被关闭，因为 `client_header_timeout` 缩短了请求头读取等待时间。
-2. 同一来源占用连接超过 `limit_conn` 限制时，Nginx 会拒绝超限连接。
-3. 正常 `/health` 请求更容易保持可用。
-4. `nginx/logs/error.log` 中可能出现连接限制或请求超时相关信息。
-
-需要本机运行后补充的实际记录：
+在 `nginx-hardened.conf` 下重新运行同样攻击后，慢连接被 Nginx 主动清理。第一轮还能看到 60 个连接，第二轮已经全部失败，攻击工具输出 `All slow connections were closed by the server.`。
 
 | 记录项 | 结果 |
 | --- | --- |
-| 加固配置启动时间 | 待运行后填写 |
-| 慢连接关闭速度 | 待运行后填写 |
-| 超限连接表现 | 待运行后填写 |
-| 正常请求表现 | 待运行后填写 |
-| Nginx 日志片段 | 待运行后填写 |
+| 加固配置启动时间 | 2026-07-08 17:46:20 左右。 |
+| 慢连接关闭速度 | `hardened-attack.log` 显示第 1 轮 `alive=60`，第 2 轮 `alive=0`、`failed_since_last_round=60`。 |
+| TCP 连接指标 | `hardened-metrics.csv` 显示 17:46:20 为 `total=63`、`established=62`，到 17:46:27 已降为 `total=3`、`established=2`，之后维持在 1-2 个已建立连接。 |
+| 超限连接表现 | 本轮主要由 `client_header_timeout 5s` 触发清理；未观察到 `limit_conn` 成为主导现象。 |
+| 正常请求表现 | `hardened-health.csv` 中 7 次 `/health` 均返回 `200`，耗时约 22-62 ms。 |
+| Nginx 日志片段 | `access.log` 出现 `408`，`request_time` 约 5.0 秒；`error.log` 出现 `client timed out ... while reading client request headers`。 |
 
-## 6. Slowloris 攻击原理
+我的理解：这次加固最明显生效的是 `client_header_timeout 5s`。Slowloris 的关键是“请求头一直不结束”，所以缩短请求头读取等待时间后，Nginx 不再长期陪这些连接等待，而是在约 5 秒后记录 408 并释放资源
+
+ Slowloris 攻击原理
 
 Slowloris 的核心是让 HTTP 请求头保持“未完成”状态。正常 HTTP 请求头会以空行结束，也就是 `\r\n\r\n`。Slowloris 只发送请求行和部分请求头，然后隔一段时间补发一小段头部字段，但一直不发送结束空行。
 
@@ -157,40 +159,46 @@ server {
 
 ## 8. 防御前后对比
 
-| 维度 | 基线配置 | 加固配置 |
+| 维度 | 基线配置实测 | 加固配置实测 |
 | --- | --- | --- |
-| 请求头读取等待 | 使用默认行为，慢请求头可能占用更久。 | `client_header_timeout 5s` 更快释放慢连接。 |
-| 单来源连接占用 | 未显式限制。 | `limit_conn perip 10` 限制单个来源并发连接。 |
-| 空闲连接保留 | `keepalive_timeout 65`。 | `keepalive_timeout 10s`。 |
-| 慢请求清理 | 依赖默认超时。 | 超时连接可被更快复位。 |
-| 可观测性 | 有访问日志和错误日志。 | 日志中更容易看到超时或连接限制。 |
+| 请求头读取等待 | 60 个慢连接在 35 秒测试期间持续存活，最后由攻击脚本关闭。 | 约 5 秒触发请求头读取超时，第二轮检查时 60 个慢连接已全部关闭。 |
+| 单来源连接占用 | 未显式限制，TCP 已建立连接稳定在 62 左右。 | 连接数从 62 个已建立连接快速降到约 1-2 个。 |
+| 空闲连接保留 | 默认 `keepalive_timeout 65`。 | `keepalive_timeout 10s`，减少空闲连接占用时间。 |
+| 慢请求清理 | 依赖默认超时，短时间内看不到主动清理效果。 | `client_header_timeout 5s` 成为本轮主要防护动作。 |
+| 正常请求可用性 | 7 次 `/health` 均为 200，耗时约 21-65 ms。 | 7 次 `/health` 均为 200，耗时约 22-62 ms。 |
+| 可观测性 | 结束后可看到 400 和客户端提前关闭日志。 | 可看到 408 和请求头读取超时日志，定位更直接。 |
 
-## 9. 可观测性指标接口预留
+结论：本次本机低强度实验中，正常请求在两组配置下都保持成功；真正的差异在于慢连接生命周期。基线组让慢连接持续占用入口连接，加固组把未完成请求头限制在约 5 秒内，从而更快释放 Nginx 资源
 
-本次选做项暂不完整实现，但已预留：
+ 可观测性指标记录
 
-| 文件 | 作用 |
-| --- | --- |
-| `scripts/collect-metrics.ps1` | 采集本地 `8080` 端口 TCP 连接数量。 |
-| `observability/metrics-template.csv` | CSV（Comma-Separated Values，逗号分隔值）指标模板。 |
-| `observability/notes.md` | 指标说明。 |
+本次已采集基础指标，未绘制资源曲线，但 CSV 可以直接导入 Excel 或其他工具生成折线图。
 
-后续可补充的核心指标：
+| 指标文件 | 记录内容 | 本次观察 |
+| --- | --- | --- |
+| `observability/20260708-174426-baseline/baseline-metrics.csv` | 基线组 8080 端口 TCP 连接数 | 总连接数稳定为 63，已建立连接稳定为 62。 |
+| `observability/20260708-174426-baseline/baseline-health.csv` | 基线组 `/health` 状态码和耗时 | 7 次均为 200，耗时 21-65 ms。 |
+| `observability/20260708-174607-hardened/hardened-metrics.csv` | 加固组 8080 端口 TCP 连接数 | 已建立连接从 62 快速降到 1-2。 |
+| `observability/20260708-174607-hardened/hardened-health.csv` | 加固组 `/health` 状态码和耗时 | 7 次均为 200，耗时 22-62 ms。 |
+| `nginx/logs/access.log` | Nginx 访问日志 | 基线组出现约 40 秒 `400`；加固组出现约 5 秒 `408`。 |
+| `nginx/logs/error.log` | Nginx 错误日志 | 基线组为客户端提前关闭；加固组为读取请求头超时。 |
 
-1. `127.0.0.1:8080` TCP 连接总数和已建立连接数。
-2. 正常 `/health` 请求成功率和耗时。
-3. Nginx access log（访问日志）状态码分布。
-4. Nginx error log（错误日志）中的超时、连接限制记录。
-5. Python 后端是否收到请求，以及收到请求的时间。
+用于发现和定位此类攻击的核心指标：
 
-## 10. 不足与后续扩展
+1. `127.0.0.1:8080` TCP 连接总数和已建立连接数是否异常升高。
+2. 正常 `/health` 请求成功率和耗时是否恶化。
+3. Nginx access log 中 `408`、`400`、`429` 等状态码是否集中出现。
+4. Nginx error log 中是否集中出现 `while reading client request headers`、`client timed out`、`limiting connections` 等关键词。
+5. 后端日志是否没有同步增长；如果入口连接很多但后端请求很少，说明压力主要卡在网关入口层
 
-1. 已确认 `C:\nginx-1.31.2\nginx.exe` 可用，且两个 Nginx 配置语法测试通过；实际攻击现象仍需要本机运行后补充，不能编造。
-2. 资源曲线是选做项，本阶段只预留接口。
+ 不足与后续扩展
+
+1. 本次已完成一轮本地自动验证；未绘制资源曲线，但已生成 CSV，可后续导入 Excel 绘图。
+2. 为避免本机负载过高，本次采用 60 个慢连接、35 秒持续时间，没有做更高强度或长时间压测。
 3. 本次只实现 Slowloris；Slow POST 和 TLS（Transport Layer Security，传输层安全协议）慢握手可作为扩展方向。
-4. 防御仅使用 Nginx 原生配置，未使用系统防火墙、WAF（Web Application Firewall，Web 应用防火墙）或第三方清洗能力。
+4. 防御仅使用 Nginx 原生配置，未使用系统防火墙、WAF（Web Application Firewall，Web 应用防火墙）或第三方清洗能力
 
-## 11. 生成依据和人工待检查点
+ 生成依据和人工待检查点
 
 生成依据：
 
@@ -198,23 +206,26 @@ server {
 2. 第二阶段确认结果：选择 Slowloris、使用 Python、Windows 本机部署、报告使用 Markdown、防御只使用 Nginx 原生配置。
 3. 第三阶段技术方案：拆分基线配置和加固配置，保留攻击工具默认安全限制，选做项先预留接口。
 4. Nginx 官方文档中关于请求头超时、请求体超时、长连接超时、连接数限制和请求限速模块的说明。
+5. 2026-07-08 本机自动测试日志：`observability/20260708-174426-baseline/` 与 `observability/20260708-174607-hardened/`。
 
 人工待检查点：
 
 | 检查点 | 状态 |
 | --- | --- |
 | 本机是否已安装 Nginx Windows 版 | 已确认：`C:\nginx-1.31.2`，版本 `nginx/1.31.2`。 |
-| `nginx-baseline.conf` 是否能在本机启动 | 语法测试已通过；完整启动与攻击现象待运行后确认。 |
-| `nginx-hardened.conf` 是否能在本机启动 | 语法测试已通过；完整启动与攻击现象待运行后确认。 |
-| 基线攻击现象是否已按表格补充 | 待运行后填写 |
-| 加固后防御效果是否已按表格补充 | 待运行后填写 |
-| 是否补做资源曲线 | 必做完成后再考虑 |
-| 是否仍存在公司名、人名、客户名或内部路径 | 本阶段已做静态脱敏检查，交付前仍建议人工复核 |
+| `nginx-baseline.conf` 是否能在本机启动 | 已完成：语法测试通过，并完成基线攻击验证。 |
+| `nginx-hardened.conf` 是否能在本机启动 | 已完成：语法测试通过，并完成加固攻击验证。 |
+| 基线攻击现象是否已按表格补充 | 已完成：慢连接 35 秒内持续存活，TCP 已建立连接约 62。 |
+| 加固后防御效果是否已按表格补充 | 已完成：约 5 秒清理慢连接，日志出现 408 和请求头读取超时。 |
+| 是否补做资源曲线 | 选做项：本次已保留 CSV，未绘制曲线图。 |
+| 是否仍存在公司名、人名、客户名或内部路径 | 本阶段已做静态脱敏检查，交付前仍建议人工复核。 
 
-## 12. 参考资料
+ 参考资料
 
 - 课程材料 `Source-A.html`：已脱敏引用其“网关是边界上的控制点”和“网关既是防线，也是攻击目标”的主线。
 - Nginx 官方核心模块文档：<https://nginx.org/en/docs/http/ngx_http_core_module.html>
 - Nginx 官方连接限制模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_conn_module.html>
 - Nginx 官方请求限速模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_req_module.html>
+
+
 

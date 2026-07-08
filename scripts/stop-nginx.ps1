@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$NginxHome = ""
 )
 
@@ -17,5 +17,6 @@ if ($NginxHome -ne "") {
 }
 
 $prefixForNginx = ($NginxPrefix -replace "\\", "/") + "/"
-& $NginxExe -p $prefixForNginx -s stop
+& $NginxExe -p $prefixForNginx -c "conf/nginx-baseline.conf" -s stop
 Write-Host "Stop signal sent to Nginx."
+

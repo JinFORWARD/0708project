@@ -1,4 +1,4 @@
-﻿# Slowloris Gateway Defense Lab
+# Slowloris Gateway Defense Lab
 
 本项目用于完成“慢速攻击模拟与网关防御实践”培训作业。你可以把它理解成一个很小的本地实验室：用 Nginx（高性能 Web 服务器、反向代理和网关软件）放在入口，后面接一个 Python（解释型编程语言）写的后端服务，然后用 Slowloris（慢速 HTTP 请求头攻击）工具模拟“慢慢发请求头、拖住入口连接”的攻击。
 
@@ -286,7 +286,7 @@ Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8080/health
 Get-NetTCPConnection -LocalPort 8080
 ```
 
-可以把观察结果填到 [03-delivery.md](03-delivery.md) 的“攻击现象记录”表格里。
+本次自动测试结果已经填写到 [03-delivery.md](03-delivery.md) 的“攻击现象记录”表格里。有效基线日志在 `observability\20260708-174426-baseline\`，如果你以后自己重跑，可以用新日志覆盖表格。
 
 ### 5.3 查看 Nginx 日志
 
@@ -351,7 +351,7 @@ Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8080/health
 3. 正常 `/health` 请求更容易保持可用。
 4. `nginx\logs\error.log` 里可能出现超时或连接限制相关记录。
 
-把观察结果填到 [03-delivery.md](03-delivery.md) 的“加固配置下应观察的现象”表格里。
+本次自动测试结果已经填写到 [03-delivery.md](03-delivery.md) 的“加固配置下的实际观察结果”表格里。有效加固日志在 `observability\20260708-174607-hardened\`，如果你以后自己重跑，可以用新日志覆盖表格。
 
 ## 8. 可选：采集简单连接指标
 
@@ -412,18 +412,21 @@ py --version
 
 ## 10. 最后怎么交作业
 
-本阶段已经生成短报告 [03-delivery.md](03-delivery.md)。你跑完实验后，主要补充这些位置：
+本阶段已经生成短报告 [03-delivery.md](03-delivery.md)，并且本次自动测试结果已经写入报告。你交作业前重点确认这些文件：
 
-1. “基线配置下应观察的现象”表格。
-2. “加固配置下应观察的现象”表格。
-3. 如果你做了指标采集，补充 `observability\metrics.csv` 或截图说明。
+1. [03-delivery.md](03-delivery.md)：短报告，已经包含基线攻击现象、加固后防御现象、Nginx 防御配置和指标清单。
+2. `observability\20260708-174426-baseline\`：基线组攻击日志、健康检查 CSV、连接指标 CSV。
+3. `observability\20260708-174607-hardened\`：加固组攻击日志、健康检查 CSV、连接指标 CSV。
+4. `nginx\conf\nginx-baseline.conf` 和 `nginx\conf\nginx-hardened.conf`：防御前后的 Nginx 配置。
+5. `attack\slowloris.py`、`backend\app.py`、`scripts\*.ps1`：源码和运行脚本。
 
-不需要改攻击工具去打外部地址，也不需要把资源曲线强行补齐。先把必做项跑通：环境、攻击现象、防御配置、短报告。
+不需要改攻击工具去打外部地址，也不需要把资源曲线强行补齐。本次资源曲线是选做项，已经保留 CSV 数据，后续需要时可以导入 Excel 画图。
 
 ## 11. 参考资料
 
 - Nginx 官方核心模块文档：<https://nginx.org/en/docs/http/ngx_http_core_module.html>
 - Nginx 官方连接限制模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_conn_module.html>
 - Nginx 官方请求限速模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_req_module.html>
+
 
 
