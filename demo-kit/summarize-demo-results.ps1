@@ -58,7 +58,7 @@ $runName = Split-Path -Leaf $RunRoot
 $summary = @"
 # Demo Test Summary
 
-Run directory: `$runName`
+Run directory: $runName
 
 ## Baseline
 
@@ -81,3 +81,4 @@ Run directory: `$runName`
 
 Set-Content -LiteralPath $summaryPath -Encoding UTF8 -Value $summary
 Write-Host "Summary written to $summaryPath"
+

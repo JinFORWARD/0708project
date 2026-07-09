@@ -1,4 +1,4 @@
-﻿# 慢速攻击模拟与网关防御实践短报告
+# 慢速攻击模拟与网关防御实践短报告
 
 ## 1. 实验范围
 
@@ -84,7 +84,7 @@ flowchart LR
 | 正常请求表现 | `hardened-health.csv` 中 7 次 `/health` 均返回 `200`，耗时约 22-62 ms。 |
 | Nginx 日志片段 | `access.log` 出现 `408`，`request_time` 约 5.0 秒；`error.log` 出现 `client timed out ... while reading client request headers`。 |
 
-我的理解：这次加固最明显生效的是 `client_header_timeout 5s`。Slowloris 的关键是“请求头一直不结束”，所以缩短请求头读取等待时间后，Nginx 不再长期陪这些连接等待，而是在约 5 秒后记录 408 并释放资源
+我的理解：这次加固最明显生效的是 `client_header_timeout 5s`。Slowloris 的关键是“请求头一直不结束”，所以缩短请求头读取等待时间后，Nginx 不再长期陪这些连接等待，而是在约 5 秒后记录 408 并释放资源。
 
 ## 6. Slowloris 攻击原理
 
@@ -204,7 +204,7 @@ server {
 
 生成依据：
 
-1. `Source-A.html` 课件中关于网关入口价值、通用架构、Slowloris 风险和课后作业要求的内容。
+1. `Source-A.html` 课件中关于网关入口价值、general架构、Slowloris 风险和课后作业要求的内容。
 2. 第二阶段确认结果：选择 Slowloris、使用 Python、Windows 本机部署、报告使用 Markdown、防御只使用 Nginx 原生配置。
 3. 第三阶段技术方案：拆分基线配置和加固配置，保留攻击工具默认安全限制，选做项先预留接口。
 4. Nginx 官方文档中关于请求头超时、请求体超时、长连接超时、连接数限制和请求限速模块的说明。
@@ -221,10 +221,8 @@ server {
 | 加固后防御效果是否已按表格补充 | 已完成：约 5 秒清理慢连接，日志出现 408 和请求头读取超时。 |
 | 是否补做资源曲线 | 选做项：本次已保留 CSV，未绘制曲线图。 |
 | 是否补充指标清单 | 已完成：见 `observability/metrics-checklist.md`。 |
-| 是否仍存在公司名、人名、客户名或内部路径 | 本阶段已做静态脱敏检查，交付前仍建议人工复核。 
-
-
-展示口径补充：明天展示时不现场运行自动测试脚本，只展示源码、Nginx 配置、短报告和指标清单。如果被问到为什么不现场跑一遍，统一说明：本轮实验已由 agent 在本机自动跑过，并写入日志和短报告；现场脚本复现暂时不够稳定，为避免展示时间被环境问题打断，本次以固定实验参数、已有日志和报告结论为准。
+| 是否仍存在公司名、人名、客户名或内部路径 | 本阶段已做静态脱敏检查，交付前仍建议人工复核。 |
+展示口径补充：明天主展示可以只展示源码、Nginx 配置、短报告和指标清单；一键自动测试脚本已修复，可作为备用展示手段。最新成功完整运行数据为 `observability/20260709-010940-9e9o/`，默认参数为 60 个慢连接、35 秒持续时间。
 
 ## 12. 参考资料
 
@@ -232,6 +230,8 @@ server {
 - Nginx 官方核心模块文档：<https://nginx.org/en/docs/http/ngx_http_core_module.html>
 - Nginx 官方连接限制模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_conn_module.html>
 - Nginx 官方请求限速模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_req_module.html>
+
+
 
 
 

@@ -1,0 +1,4 @@
+﻿"timestamp","local_port","tcp_connections_total","tcp_connections_established","note"
+"2026-07-09T01:04:11","8080","3","2",""
+"2026-07-09T01:04:14","8080","9","8",""
+"2026-07-09T01:04:17","8080","9","8",""

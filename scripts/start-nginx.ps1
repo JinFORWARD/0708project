@@ -36,13 +36,50 @@ foreach ($dir in $tempDirs) {
     New-Item -ItemType Directory -Force -Path (Join-Path $NginxPrefix $dir) | Out-Null
 }
 
+$pidPath = Join-Path $NginxPrefix "logs\nginx.pid"
+if (Test-Path -LiteralPath $pidPath) {
+    $pidRaw = Get-Content -LiteralPath $pidPath -Raw -ErrorAction SilentlyContinue
+    $pidText = "$pidRaw".Trim()
+    if ($pidText -notmatch '^\d+$') {
+        Write-Warning "Removing stale or invalid Nginx pid file: $pidPath"
+        Remove-Item -LiteralPath $pidPath -Force
+    }
+}
+
+function Invoke-NginxChecked {
+    param(
+        [string[]]$Arguments,
+        [string]$FailureMessage
+    )
+
+    $oldErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        $output = & $NginxExe @Arguments 2>&1
+        $exitCode = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $oldErrorActionPreference
+    }
+    if ($output) {
+        $output | ForEach-Object { Write-Host $_ }
+    }
+    if ($exitCode -ne 0) {
+        throw "$FailureMessage Exit code: $exitCode"
+    }
+}
+
 $prefixForNginx = ($NginxPrefix -replace "\\", "/") + "/"
 $conf = "conf/nginx-$Mode.conf"
 
 Write-Host "Testing Nginx config: $conf"
-& $NginxExe -p $prefixForNginx -c $conf -t
+Invoke-NginxChecked -Arguments @("-p", $prefixForNginx, "-c", $conf, "-t") -FailureMessage "Nginx config test failed."
 
 Write-Host "Starting Nginx with $conf"
-& $NginxExe -p $prefixForNginx -c $conf
+$arguments = @("-p", $prefixForNginx, "-c", $conf)
+$process = Start-Process -FilePath $NginxExe -ArgumentList $arguments -PassThru -WindowStyle Hidden
+Start-Sleep -Seconds 1
+Write-Host "Nginx start command launched. Bootstrap process id: $($process.Id)"
 Write-Host "Nginx should now listen on http://127.0.0.1:8080"
+
+
 

@@ -92,7 +92,7 @@ localhost
     member-a-speaker-notes.md       # 成员 A 讲解稿
     member-b-speaker-notes.md       # 成员 B 讲解稿
     presentation-flow.md            # 双人展示流程
-    run-demo-tests.ps1              # 历史自动测试脚本，当前不作为现场展示内容
+    run-demo-tests.ps1              # 备用一键自动测试脚本
 ```
 
 ## 3. 运行前准备
@@ -419,7 +419,7 @@ py --version
 
 ## 10. 最后怎么交作业
 
-本阶段已经生成短报告 [03-delivery.md](03-delivery.md)，并且本次自动测试结果已经写入报告。明天展示时不再现场运行自动测试脚本，只展示源码、配置、短报告和指标清单。
+本阶段已经生成短报告 [03-delivery.md](03-delivery.md)，并且本次自动测试结果已经写入报告。明天主展示可以只展示源码、配置、短报告和指标清单；一键自动测试脚本已修复，可作为备用展示手段。
 
 展示时重点打开这些文件：
 
@@ -432,13 +432,14 @@ py --version
 
 如果被问到“为什么不现场跑一遍”，可以统一回答：这轮实验结果已经由 agent 在本机自动跑过，并写入日志和短报告；现场脚本复现暂时不够稳定，为了避免展示时间被环境问题打断，本次以固定实验参数、已有日志和报告结论为准。
 
-`demo-kit\` 中的自动测试脚本只作为历史存档，不再作为明天展示内容。两份讲解稿和展示流程仍可作为口头展示参考。
+`demo-kit\` 中的一键自动测试脚本已修复并完成默认参数验证，可作为备用展示手段；两份讲解稿和展示流程仍可作为口头展示参考。最新成功数据目录为 `observability\20260709-010940-9e9o\`。
 
 ## 11. 参考资料
 
 - Nginx 官方核心模块文档：<https://nginx.org/en/docs/http/ngx_http_core_module.html>
 - Nginx 官方连接限制模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_conn_module.html>
 - Nginx 官方请求限速模块文档：<https://nginx.org/en/docs/http/ngx_http_limit_req_module.html>
+
 
 
 

@@ -22,7 +22,7 @@
 
 | 序号 | 脱敏材料名 | 类型 | 状态 | 关键信息 |
 | --- | --- | --- | --- | --- |
-| 1 | `Source-A.html` | HTML 幻灯片课件 | 已完整读取正文文本 | 共 15 页，主题为网关技术导论，包含网关历史、价值、谱系、通用架构、演进趋势、现场讨论和课后实践作业。 |
+| 1 | `Source-A.html` | HTML 幻灯片课件 | 已完整读取正文文本 | 共 15 页，主题为网关技术导论，包含网关历史、价值、谱系、general架构、演进趋势、现场讨论和课后实践作业。 |
 | 2 | `<TaskDir>/LICENSE` | 文本许可证文件 | 已识别存在，未作为本次任务材料重点分析 | 与慢速攻击实验内容无直接关联。 |
 
 未读取到其他原始材料：PPT、PDF、Word、Markdown、纯文本、录音转文本、评分标准、示例代码或实验模板。
@@ -37,7 +37,7 @@
 | Slowloris | Slowloris | 一类慢速 HTTP 请求头攻击，通过缓慢发送请求头长期占用连接。 | 三选一攻击方向之一。 |
 | Slow POST | Slow POST | 慢速请求体上传攻击，通过缓慢发送 HTTP 请求体长期占用连接和处理资源。 | 三选一攻击方向之一。 |
 | TLS slow handshake | Transport Layer Security slow handshake，传输层安全协议慢握手 | 通过拖慢 TLS 握手过程占用服务端连接或握手资源。 | 三选一攻击方向之一。 |
-| TLS | Transport Layer Security，传输层安全协议 | 用于网络通信加密、身份认证和完整性保护的安全协议。 | 作业和课件均涉及。 |
+| TLS | Transport Layer Security，传输层安全协议 | 用于网络通信加密、identity-authentication和完整性保护的安全协议。 | 作业和课件均涉及。 |
 | SSL | Secure Sockets Layer，安全套接字层 | TLS 的前身；现实语境中常被泛称为证书或加密连接相关能力。 | 课件讨论证书 47 天上限时涉及。 |
 | HTTP | HyperText Transfer Protocol，超文本传输协议 | 浏览器、API 和 Web 服务常用应用层协议。 | 与慢速攻击直接相关。 |
 | TCP | Transmission Control Protocol，传输控制协议 | 面向连接的传输层协议，HTTP 和 TLS 常运行其上。 | 与连接占用、握手和超时相关。 |
@@ -55,11 +55,11 @@
 | Observability | Observability，可观测性 | 通过日志、指标、链路追踪等手段理解系统状态。 | 本次指标梳理的基础。 |
 | Metric | Metric，指标 | 可量化观测数据，例如连接数、请求速率、错误率和 CPU 使用率。 | 选做指标清单相关。 |
 | Log | Log，日志 | 系统记录的事件文本，用于定位请求、错误和攻击现象。 | 可观测性数据之一。 |
-| Trace | Trace，链路追踪 | 记录一次请求跨组件路径和耗时的观测手段。 | 课件通用架构提及。 |
-| Data Plane | Data Plane，数据面 | 网关真正处理实时流量的部分，追求低延迟、高吞吐。 | 课件通用架构核心。 |
-| Control Plane | Control Plane，控制面 | 负责配置、策略下发、审计、回滚和灰度等控制逻辑。 | 课件通用架构核心。 |
+| Trace | Trace，链路追踪 | 记录一次请求跨组件路径和耗时的观测手段。 | 课件general架构提及。 |
+| Data Plane | Data Plane，数据面 | 网关真正处理实时流量的部分，追求低延迟、高吞吐。 | 课件general架构核心。 |
+| Control Plane | Control Plane，控制面 | 负责配置、策略下发、审计、回滚和灰度等控制逻辑。 | 课件general架构核心。 |
 | Ingress | Ingress，入口/入站接入层 | 请求进入网关的接入位置，处理协议解析、连接管理和握手。 | 与慢速攻击入口直接相关。 |
-| Egress | Egress，出口/后端交互层 | 网关访问后端服务的出口侧，涉及连接池、负载策略和协议适配。 | 课件通用架构提及。 |
+| Egress | Egress，出口/后端交互层 | 网关访问后端服务的出口侧，涉及连接池、负载策略和协议适配。 | 课件general架构提及。 |
 | Pipeline | Pipeline，流水线处理模型 | 请求按过滤器顺序经过认证、限流、路由、转换等步骤。 | 课件性能安全悖论提及。 |
 | Filter | Filter，过滤器 | Pipeline 中的单个处理环节，例如认证、限流或转发。 | 课件架构提及。 |
 | Rate Limit | Rate Limit，限流 | 通过限制请求速率或连接规模保护服务。 | 防御方案可能涉及。 |
@@ -71,13 +71,13 @@
 | xDS | x Discovery Service，x 发现服务协议族 | 常用于动态下发代理/网关配置的一组控制面接口。 | 课件控制面技术提及。 |
 | etcd | etcd | 分布式键值存储，常用于服务发现和配置协调。 | 课件控制面技术提及。 |
 | CRD | Custom Resource Definition，自定义资源定义 | Kubernetes 中扩展资源类型的机制。 | 课件控制面技术提及。 |
-| CVE | Common Vulnerabilities and Exposures，通用漏洞披露编号 | 标准化记录安全漏洞的编号体系。 | 课件安全侧提及。 |
+| CVE | Common Vulnerabilities and Exposures，general漏洞披露编号 | 标准化记录安全漏洞的编号体系。 | 课件安全侧提及。 |
 | OpenSSL | OpenSSL | 开源 TLS/SSL 加密库，常用于证书、握手和加密通信。 | 课件 TLS 收敛示例提及。 |
-| mTLS | mutual TLS，双向 TLS 认证 | 客户端和服务端都使用证书进行身份认证。 | 课件入口价值示例提及。 |
+| mTLS | mutual TLS，双向 TLS 认证 | 客户端和服务端都使用证书进行identity-authentication。 | 课件入口价值示例提及。 |
 | SAN | Subject Alternative Name，主体备用名称 | TLS 证书中声明额外域名或身份的字段。 | 课件证书 47 天讨论提及。 |
 | CA/Browser Forum | Certification Authority/Browser Forum，证书颁发机构与浏览器论坛 | 制定公网证书行业规范的组织。 | 课件现场讨论材料提及。 |
 | SASE | Secure Access Service Edge，安全访问服务边缘 | 将网络、安全和访问控制能力云化融合的架构。 | 课件演进趋势提及。 |
-| IAM | Identity and Access Management，身份与访问管理 | 负责身份认证、授权和访问治理的体系。 | 课件信任重构提及。 |
+| IAM | Identity and Access Management，身份与访问管理 | 负责identity-authentication、授权和访问治理的体系。 | 课件信任重构提及。 |
 
 ## 4. 原始材料整理分析总结
 
@@ -85,14 +85,14 @@
 
 `Source-A.html` 是一份面向新员工的网关技术导论课件。材料不把网关定义为单一产品，而是把 Gateway（Gateway，网关）理解为“边界上的控制点”：哪里有边界，哪里就可能需要网关；哪里有控制诉求，哪里就会出现入口治理。
 
-课程用“入口”作为统一视角，串起历史、价值、产品谱系、通用架构和演进趋势。该视角对本次慢速攻击实验很重要：慢速攻击的核心不是攻击某一个后端业务功能，而是利用入口层连接管理、协议解析、超时策略和资源限制上的弱点，让网关或后端资源被长期占用。
+课程用“入口”作为统一视角，串起历史、价值、产品谱系、general架构和演进趋势。该视角对本次慢速攻击实验很重要：慢速攻击的核心不是攻击某一个后端业务功能，而是利用入口层连接管理、协议解析、超时策略和资源限制上的弱点，让网关或后端资源被长期占用。
 
 ### 4.2 课程结构
 
 1. 历史：从协议翻译、硬件盒子、软件平台到意图入口，强调网关形态变化但底层范式不变。
 2. 入口价值：网关提供收敛、控制、可观测、可演进四类价值，同时带来性能瓶颈、单点故障、组织耦合和演进包袱。
 3. 产品谱系：通过边界、协议层次、部署形态三条轴定位网关；材料举出 Load Balancer（负载均衡器）、VPN（Virtual Private Network，虚拟专用网络）网关、SAG（全称待确认，课件中指安全认证网关）、WAF（Web Application Firewall，Web 应用防火墙）、API（Application Programming Interface，应用程序编程接口）网关五类形态。
-4. 通用架构：网关可抽象为 Ingress（入口/入站接入层）、Data Plane（数据面）、Control Plane（控制面）、Egress（出口/后端交互层）四层，并横向贯穿 Observability（可观测性）和高可用能力。
+4. general架构：网关可抽象为 Ingress（入口/入站接入层）、Data Plane（数据面）、Control Plane（控制面）、Egress（出口/后端交互层）四层，并横向贯穿 Observability（可观测性）和高可用能力。
 5. 性能与安全：材料强调 Pipeline（流水线处理模型）和 Filter（过滤器）的顺序敏感性，也指出协议解析漏洞、HTTP（HyperText Transfer Protocol，超文本传输协议）走私、Slowloris（慢速 HTTP 请求头攻击）、DoS（Denial of Service，拒绝服务攻击）等会让网关既是防线，也是攻击目标。
 6. 演进趋势：数据面向 eBPF（extended Berkeley Packet Filter，扩展伯克利包过滤器）和 Rust 等方向重构；业务侧由 VPN 向零信任和 SASE（Secure Access Service Edge，安全访问服务边缘）演进；AI（Artificial Intelligence，人工智能）使网关从 API 网关继续向 AI 网关扩展。
 7. 课后作业：最终落点是 Slow Attack Lab（慢速攻击实验），要求本地部署 Nginx 网关和后端服务，模拟一种慢速攻击，研究 Nginx 防护配置，并整理短报告。
@@ -101,7 +101,7 @@
 
 - 慢速攻击属于入口层和协议处理层问题，重点发生在连接管理、请求头/请求体读取、TLS（Transport Layer Security，传输层安全协议）握手、超时与连接资源占用。
 - 课件第 11 页明确把 slowloris 放在“安全侧”的协议解析/慢速攻击风险中，说明本次作业不是孤立安全脚本，而是对“网关既是防线也是攻击目标”的实践验证。
-- 课件第 9-11 页的通用架构和 Pipeline 模型可用于组织报告：先定位攻击影响的层次，再解释默认配置下的攻击现象，最后给出防御配置如何改变连接生命周期和资源边界。
+- 课件第 9-11 页的general架构和 Pipeline 模型可用于组织报告：先定位攻击影响的层次，再解释默认配置下的攻击现象，最后给出防御配置如何改变连接生命周期和资源边界。
 - 课件第 15 页给出作业五项要求，其中“指标梳理”和“资源曲线”带有选做性质，但对于证明攻击现象和防御效果有帮助。
 
 ## 5. 本次任务核心要求

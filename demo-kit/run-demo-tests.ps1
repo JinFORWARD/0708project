@@ -140,10 +140,8 @@ function Run-Phase {
     $metricsRel = Join-Path $phaseRelDir "$Phase-metrics.csv"
     $healthRel = Join-Path $phaseRelDir "$Phase-health.csv"
 
-    Start-DemoWindow -Title "Demo - Start Nginx $phaseTitle" -DoneName "$Phase-nginx.done" -Command @"
-& .\scripts\start-nginx.ps1 -Mode $Phase -NginxHome $(Quote-PS $NginxHome) 2>&1 | Tee-Object -FilePath $(Quote-PS $startLog)
-"@
-    Wait-ForMarker -DoneName "$Phase-nginx.done" -TimeoutSeconds 40
+    Write-Host "Starting Nginx $phaseTitle in the main controller..." -ForegroundColor Cyan
+    & (Join-Path $ProjectRoot "scripts\start-nginx.ps1") -Mode $Phase -NginxHome $NginxHome 2>&1 | Tee-Object -FilePath $startLog
     Wait-HttpOk -Url "http://127.0.0.1:8080/health" -Name "$phaseTitle gateway" -TimeoutSeconds 25
 
     Start-DemoWindow -Title "Demo - $phaseTitle metrics" -DoneName "$Phase-metrics.done" -Command @"
@@ -164,10 +162,12 @@ function Run-Phase {
     Wait-ForMarker -DoneName "$Phase-metrics.done" -TimeoutSeconds (($Samples * $IntervalSeconds) + 120)
     Wait-ForMarker -DoneName "$Phase-health.done" -TimeoutSeconds (($Samples * $IntervalSeconds) + 120)
 
-    Start-DemoWindow -Title "Demo - Stop Nginx after $phaseTitle" -DoneName "$Phase-stop.done" -Command @"
-& .\scripts\stop-nginx.ps1 -NginxHome $(Quote-PS $NginxHome)
-"@
-    Wait-ForMarker -DoneName "$Phase-stop.done" -TimeoutSeconds 40
+    Write-Host "Stopping Nginx after $phaseTitle..." -ForegroundColor Cyan
+    try {
+        & (Join-Path $ProjectRoot "scripts\stop-nginx.ps1") -NginxHome $NginxHome | Out-Host
+    } catch {
+        Write-Warning "Nginx stop after $phaseTitle finished with warning: $($_.Exception.Message)"
+    }
     Start-Sleep -Seconds 2
 }
 
@@ -201,5 +201,6 @@ Get-Content -LiteralPath $(Quote-PS $summaryPath) -Encoding UTF8
 Write-Host "Demo finished." -ForegroundColor Green
 Write-Host "Summary: $summaryPath"
 Write-Host "Keep the opened PowerShell windows for the presentation, or close them after rehearsal."
+
 
 

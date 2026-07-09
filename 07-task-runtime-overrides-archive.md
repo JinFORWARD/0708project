@@ -1,10 +1,10 @@
-﻿# 单次任务临时覆盖规则归档
+# 单次任务临时覆盖规则归档
 
 ## 1. 当前任务信息
 
 - 当前任务名称：慢速攻击模拟与网关防御实践
 - 当前任务目录：`D:\Workspace\01-onboarding-training\2026-07-08-gateway-tech-intro\0708project`
-- 原始材料路径：`D:\Workspace\01-onboarding-training\2026-07-08-gateway-tech-intro\00-原始材料`
+- 原始材料路径：`D:\Workspace\01-onboarding-training\2026-07-08-gateway-tech-intro\00-raw-materials`
 - 归档时间：2026-07-08
 
 ## 2. 本次实际使用的流程调整
